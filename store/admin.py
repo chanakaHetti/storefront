@@ -29,6 +29,7 @@ class ProductAdmin(admin.ModelAdmin):
     list_editable = ['unit_price']
     list_filter = ['collection', 'last_update', InventoryFilter]
     list_per_page = 10
+    search_fields = ['title']
 
     @admin.display(ordering='inventory')
     def inventory_status(self, product):
@@ -74,6 +75,15 @@ class CollectionAdmin(admin.ModelAdmin):
             product_count=Count('product')
         )
 
+class OrderItemInlie(admin.TabularInline):
+    autocomplete_fields = ['product']
+    min_num = 1
+    max_num = 10
+    model = models.OrderItem
+    extra = 0
+
 @admin.register(models.Order)
 class OrderAdmin(admin.ModelAdmin):
+    autocomplete_fields = ['customer']
+    inlines = [OrderItemInlie]
     list_display = ['id', 'placed_at', 'customer']
